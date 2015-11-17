@@ -46,16 +46,14 @@ dependencies {
 }
 
 
-task pushOmnijar(type: Files, dependsOn: configurations.withOmnijar) {
+task pushOmnijar(type: Files, dependsOn: [configurations.withOmnijar, 'stopDebug']) {
     script {
         File file = project(":dependency").configurations.getByName("omnijar").artifacts.toArray()[0].getFile()
         push file.getAbsolutePath(), '/sdcard/' + file.getName()
-        adb 'shell', 'am', 'force-stop', applicationId
     }
 }
 
 task installWithOmnijar (dependsOn: 'installDebug') {
     pushOmnijar
-
 }
 
