@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+configurations {
+    omnijar
+}
+
+artifacts {
+    omnijar file("omnijar.txt")
+}
+
