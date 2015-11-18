@@ -33,20 +33,14 @@ android {
 
 evaluationDependsOn ':dependency'
 
-configurations {
-    withOmnijar
-}
-
 dependencies {
-    withOmnijar project(path: ':dependency', configuration: 'omnijar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 }
 
-
-task pushOmnijar(type: Files, dependsOn: [configurations.withOmnijar, 'stopDebug']) {
+task pushOmnijar(type: Files, dependsOn: 'stopDebug') {
     script {
         File file = project(":dependency").configurations.getByName("omnijar").artifacts.toArray()[0].getFile()
         push file.getAbsolutePath(), '/sdcard/' + file.getName()
