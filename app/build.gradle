@@ -44,10 +44,17 @@ task pushOmnijar(type: Files, dependsOn: 'stopDebug') {
     script {
         File file = project(":dependency").configurations.getByName("omnijar").artifacts.toArray()[0].getFile()
         push file.getAbsolutePath(), '/sdcard/' + file.getName()
+        println 'pushed omnijar'
     }
 }
 
 task installWithOmnijar (dependsOn: 'installDebug') {
     pushOmnijar
+}
+
+android.applicationVariants.all { variant ->
+    if (variant.assemble) {
+        variant.assemble.dependsOn pushOmnijar
+    }
 }
 
