@@ -40,21 +40,17 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
 }
 
-task pushOmnijar(type: Files, dependsOn: 'stopDebug') {
-    script {
-        File file = project(":dependency").configurations.getByName("omnijar").artifacts.toArray()[0].getFile()
-        push file.getAbsolutePath(), '/sdcard/' + file.getName()
-        println 'pushed omnijar'
-    }
-}
-
-task installWithOmnijar (dependsOn: 'installDebug') {
-    pushOmnijar
-}
-
 android.applicationVariants.all { variant ->
-    if (variant.assemble) {
-        variant.assemble.dependsOn pushOmnijar
+    if (variant.assemble && variant.buildType.name == 'debug') {
+        def name = variant.name.capitalize()
+        task "pushOmnijar$name" (type: Files, dependsOn: "stop$name" ) {
+            script {
+                File file = project(":dependency").configurations.getByName('omnijar').artifacts.toArray()[0].getFile()
+                push file.getAbsolutePath(), '/sdcard/' + file.getName()
+                println "pushed omnijar for " + variant.buildType.name.capitalize()
+            }
+        }
+        variant.assemble.dependsOn "pushOmnijar$name"
     }
 }
 
